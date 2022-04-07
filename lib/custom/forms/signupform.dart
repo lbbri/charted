@@ -1,3 +1,4 @@
+import 'package:charted/services/database_service.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,7 +21,9 @@ class _SignUpFormState extends State<SignUpForm> {
   var displayName = TextEditingController();
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final DatabaseService db = DatabaseService();
+
+  //final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -107,12 +110,6 @@ class _SignUpFormState extends State<SignUpForm> {
                     });
                   },
                 ),
-                TextButton(
-                    onPressed: () {
-                      // Navigator.push(context,
-                      //     MaterialPageRoute(builder: (context) => LogIn()));
-                    },
-                    child: const Text("Existing User? Log In"))
               ],
             ),
           );
@@ -123,6 +120,15 @@ class _SignUpFormState extends State<SignUpForm> {
       try {
         await _auth.createUserWithEmailAndPassword(
             email: email.text, password: password.text);
+
+        db
+            .addUser(_auth.currentUser!.uid, email.text, displayName.text)
+            .then((value) {
+          setState(() {
+            loading = false;
+            widget.onTap();
+          });
+        });
         ScaffoldMessenger.of(context).clearSnackBars();
       } on FirebaseException catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -132,21 +138,6 @@ class _SignUpFormState extends State<SignUpForm> {
           loading = false;
         });
         return;
-      }
-      try {
-        await _db.collection("users").doc(_auth.currentUser!.uid).set({
-          "email": email.text, //redundant?
-          "display_name": displayName.text,
-        });
-
-        widget.onTap();
-      } on FirebaseException catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(e.message ?? "Unknown Error")));
-
-        setState(() {
-          loading = false;
-        });
       }
     } else {
       setState(() {
