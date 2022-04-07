@@ -1,5 +1,5 @@
-// import 'package:chat_rank/pages/chatPage.dart';
-// import 'package:chat_rank/pages/profilePage.dart';
+import 'package:charted/pages/login.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -11,51 +11,58 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // int _selectedIndex = 0;
-  // static const TextStyle optionStyle =
-  //     TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-
-  //static const List<Widget> _widgetOptions = <Widget>[
-  // final List<Widget> _widgetOptions = <Widget>[
-  //   ChatPage(),
-  //   ProfilePage(),
-  //   // const Text(
-  //   //   'Profile Page',
-  //   //   style: optionStyle,
-  //   // ),
-  // ];
-
-  // void _onItemTapped(int index) {
-  //   setState(() {
-  //     _selectedIndex = index;
-  //   });
-  // }
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
-    //resource: https://www.freecodecamp.org/news/build-a-chat-app-ui-with-flutter/
-    return const Scaffold(
-      body: Text('home page'),
-      // body: _widgetOptions.elementAt(_selectedIndex),
-      // bottomNavigationBar: BottomNavigationBar(
-      //   selectedItemColor: Colors.greenAccent,
-      //   unselectedItemColor: Colors.grey.shade600,
-      //   selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
-      //   unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
-      //   type: BottomNavigationBarType.fixed,
-      //   items: const [
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.message),
-      //       label: "Chats",
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.account_box),
-      //       label: "Profile",
-      //     ),
-      //   ],
-      //   currentIndex: _selectedIndex,
-      //   onTap: _onItemTapped,
-      // ),
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.white,
+        flexibleSpace: SafeArea(
+          child: Container(
+            padding: const EdgeInsets.only(right: 16),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const <Widget>[
+                      Text(
+                        'Home',
+                        //widget.name,
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w600),
+                      ),
+                      SizedBox(
+                        height: 6,
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    logout();
+                  },
+                  icon: const Icon(Icons.logout),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      body: const Text('home page'),
+    );
+  }
+
+  void logout() async {
+    await _auth.signOut();
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (BuildContext context) => const LogInPage()),
+      ModalRoute.withName('/'),
     );
   }
 }

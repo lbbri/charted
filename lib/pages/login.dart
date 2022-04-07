@@ -20,6 +20,7 @@ class LogInPage extends StatelessWidget {
   }
 
   static void _successfulLogIn(BuildContext context) {
+    Navigator.pop(context);
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (BuildContext context) => const HomePage()),

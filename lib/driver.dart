@@ -13,7 +13,6 @@ class Driver extends StatelessWidget {
     var stream = _auth.idTokenChanges();
     stream.listen((event) {});
     if (_auth.currentUser != null) {
-      //return const LogInPage();
       return const HomePage();
     } else {
       return const LogInPage();
