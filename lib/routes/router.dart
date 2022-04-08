@@ -1,4 +1,6 @@
 import 'package:charted/driver.dart';
+import 'package:charted/pages/charts.dart';
+import 'package:charted/pages/createchart.dart';
 import 'package:charted/pages/home.dart';
 import 'package:charted/pages/signup.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +14,10 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => Driver());
       case Routes.signup:
         return MaterialPageRoute(builder: (_) => const SignUpPage());
+      case Routes.charts:
+        return MaterialPageRoute(builder: (_) => const ChartsPage());
+      case Routes.createChart:
+        return MaterialPageRoute(builder: (_) => const CreateChartPage());
       default:
         return MaterialPageRoute(builder: (_) => Driver());
     }
@@ -21,5 +27,7 @@ class AppRouter {
 class Routes {
   static const String home = HomePage.routeName;
   static const String signup = SignUpPage.routeName;
+  static const String charts = ChartsPage.routeName;
+  static const String createChart = CreateChartPage.routeName;
   static const String driver = '/';
 }

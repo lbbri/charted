@@ -1,3 +1,4 @@
+import 'package:charted/pages/charts.dart';
 import 'package:charted/pages/home.dart';
 import 'package:charted/pages/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,7 +14,7 @@ class Driver extends StatelessWidget {
     var stream = _auth.idTokenChanges();
     stream.listen((event) {});
     if (_auth.currentUser != null) {
-      return const HomePage();
+      return const ChartsPage();
     } else {
       return const LogInPage();
     }

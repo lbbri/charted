@@ -1,3 +1,4 @@
+import 'package:charted/pages/charts.dart';
 import 'package:charted/pages/home.dart';
 import 'package:charted/custom/forms/signupform.dart';
 import 'package:flutter/material.dart';
@@ -20,9 +21,10 @@ class SignUpPage extends StatelessWidget {
   }
 
   static void _successfulSignUp(BuildContext context) {
+    Navigator.pop(context);
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (BuildContext context) => const HomePage()),
+      MaterialPageRoute(builder: (BuildContext context) => const ChartsPage()),
       ModalRoute.withName('/'),
     );
   }
