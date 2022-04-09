@@ -1,5 +1,6 @@
 import 'package:charted/models/chart.dart';
 import 'package:charted/models/iteration.dart';
+import 'package:charted/pages/iterations.dart';
 import 'package:charted/pages/login.dart';
 import 'package:charted/services/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -83,18 +84,25 @@ class _ChartsPageState extends State<ChartsPage> {
                       itemBuilder: (BuildContext context, int index) {
                         var currentIteration = iterations[keys[index]];
 
-                        return Card(
-                            elevation: 5.0,
-                            child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  ListTile(
-                                    leading: const Icon(Icons.library_music),
-                                    title: Text(currentIteration!.name),
-                                    subtitle:
-                                        Text(currentIteration.description),
-                                  ),
-                                ]));
+                        //bri: make this a custom widget
+                        return GestureDetector(
+                            onTap: () {
+                              openChart(currentIteration!.name,
+                                  currentIteration.chart);
+                            },
+                            child: Card(
+                                elevation: 5.0,
+                                child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      ListTile(
+                                        leading:
+                                            const Icon(Icons.library_music),
+                                        title: Text(currentIteration!.name),
+                                        subtitle:
+                                            Text(currentIteration.description),
+                                      ),
+                                    ])));
                       })
                   : const Center(
                       child: Text("No charts have been made yet."),
@@ -125,5 +133,15 @@ class _ChartsPageState extends State<ChartsPage> {
       MaterialPageRoute(builder: (BuildContext context) => const LogInPage()),
       ModalRoute.withName('/'),
     );
+  }
+
+  void openChart(String name, String chartId) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => IterationsPage(
+                  name: name,
+                  chartID: chartId,
+                )));
   }
 }
