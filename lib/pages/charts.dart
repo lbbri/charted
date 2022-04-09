@@ -1,4 +1,7 @@
+import 'package:charted/models/chart.dart';
+import 'package:charted/models/iteration.dart';
 import 'package:charted/pages/login.dart';
+import 'package:charted/services/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +15,16 @@ class ChartsPage extends StatefulWidget {
 
 class _ChartsPageState extends State<ChartsPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final DatabaseService _db = DatabaseService();
+
+  //var lastIterations = DatabaseService().getLastITerations();
+  var lastIterations = {};
+
+  @override
+  void initState() {
+    super.initState();
+    getIterations();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +66,41 @@ class _ChartsPageState extends State<ChartsPage> {
           ),
         ),
       ),
-      body: const Text('charts page'),
+      body: StreamBuilder<Map<String, Chart>>(
+          stream: _db.charts,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Center(
+                child: Text("An error has occured!"),
+              );
+            } else {
+              var iterations = _db.getLastIterations();
+              var keys = iterations.keys.toList();
+
+              return keys.isNotEmpty
+                  ? ListView.builder(
+                      itemCount: iterations.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        var currentIteration = iterations[keys[index]];
+
+                        return Card(
+                            elevation: 5.0,
+                            child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  ListTile(
+                                    leading: const Icon(Icons.library_music),
+                                    title: Text(currentIteration!.name),
+                                    subtitle:
+                                        Text(currentIteration.description),
+                                  ),
+                                ]));
+                      })
+                  : const Center(
+                      child: Text("No charts have been made yet."),
+                    );
+            }
+          }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _openCreateChart();
@@ -61,6 +108,10 @@ class _ChartsPageState extends State<ChartsPage> {
         child: const Icon(Icons.add),
       ),
     );
+  }
+
+  void getIterations() {
+    lastIterations = DatabaseService().getLastIterations();
   }
 
   void _openCreateChart() {
