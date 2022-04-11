@@ -1,13 +1,17 @@
+import 'package:charted/models/iteration.dart';
 import 'package:charted/services/database_service.dart';
+import 'package:charted/services/spotify_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class CreateChartForm extends StatefulWidget {
   const CreateChartForm({
     required this.onTap,
+    this.chartId = '',
     Key? key,
   }) : super(key: key);
   final Function onTap;
+  final String? chartId;
   @override
   State<CreateChartForm> createState() => _CreateChartFormState();
 }
@@ -23,6 +27,14 @@ class _CreateChartFormState extends State<CreateChartForm> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.chartId);
+    if (widget.chartId != '') {
+      Iteration lastIteration = db.getIterationFromChart(widget.chartId!)!;
+      name.text = lastIteration.name;
+      description.text = lastIteration.description;
+      isRanked = lastIteration.ranked;
+    }
+
     return loading
         ? const Center(child: Text('loading'))
         : Form(
@@ -64,6 +76,11 @@ class _CreateChartFormState extends State<CreateChartForm> {
                       _create();
                     },
                     child: const Text("Save Chart")),
+                ElevatedButton(
+                    onPressed: () {
+                      testConnection();
+                    },
+                    child: const Text("Test Connection")),
               ],
             ),
           );
@@ -72,5 +89,11 @@ class _CreateChartFormState extends State<CreateChartForm> {
   void _create() {
     db.addChart(_auth.currentUser!.uid, name.text, description.text, isRanked);
     widget.onTap();
+  }
+
+  void testConnection() {
+    final spot = SpotifyService();
+
+    spot.testConnection();
   }
 }

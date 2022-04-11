@@ -1,5 +1,7 @@
+import 'package:charted/custom/forms/createchartform.dart';
 import 'package:charted/models/chart.dart';
 import 'package:charted/models/iteration.dart';
+import 'package:charted/pages/createchart.dart';
 import 'package:charted/services/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +12,7 @@ class IterationsPage extends StatefulWidget {
   final String name;
   final String chartID;
 
-  const IterationsPage({
+  IterationsPage({
     Key? key,
     required this.name,
     required this.chartID,
@@ -75,7 +77,7 @@ class _IterationsPageState extends State<IterationsPage> {
                 ),
                 IconButton(
                   onPressed: () {
-                    //_openCreateChart();
+                    _openEditChart();
                   },
                   icon: const Icon(
                     Icons.edit,
@@ -89,5 +91,17 @@ class _IterationsPageState extends State<IterationsPage> {
       ),
       body: const Text('this is a testttt'),
     );
+  }
+
+  void _openEditChart() {
+    // Navigator.pushNamed(context, '/create-charts',
+    //     arguments: {'chartId': widget.chartID});
+    String id = widget.chartID;
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => CreateChartPage(
+                  chartId: widget.chartID,
+                )));
   }
 }

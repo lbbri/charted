@@ -17,7 +17,7 @@ class AppRouter {
       case Routes.charts:
         return MaterialPageRoute(builder: (_) => const ChartsPage());
       case Routes.createChart:
-        return MaterialPageRoute(builder: (_) => const CreateChartPage());
+        return MaterialPageRoute(builder: (_) => CreateChartPage());
       default:
         return MaterialPageRoute(builder: (_) => Driver());
     }

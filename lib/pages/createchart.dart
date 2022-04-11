@@ -4,7 +4,12 @@ import 'package:flutter/material.dart';
 class CreateChartPage extends StatefulWidget {
   static const String routeName = '/create-charts';
 
-  const CreateChartPage({Key? key}) : super(key: key);
+  CreateChartPage({
+    this.chartId = '',
+    Key? key,
+  }) : super(key: key);
+
+  final String? chartId;
   @override
   State<CreateChartPage> createState() => _CreateChartPageState();
 }
@@ -68,7 +73,10 @@ class _CreateChartPageState extends State<CreateChartPage> {
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-              CreateChartForm(onTap: () => _successfulCreation(context)),
+              CreateChartForm(
+                onTap: () => _successfulCreation(context),
+                chartId: widget.chartId,
+              ),
             ])));
   }
 

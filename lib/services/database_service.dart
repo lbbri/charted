@@ -43,7 +43,7 @@ class DatabaseService {
   Future<void> _setLastIterationsFromCharts(Map<String, Chart> charts) async {
     for (var chart in charts.values) {
       var lastIteration = chart.lIteration;
-      _firestore
+      await _firestore
           .collection('iterations')
           .doc(lastIteration)
           .get()
@@ -52,6 +52,20 @@ class DatabaseService {
         lastIterationMap[iteration.id] = iteration;
       });
     }
+    return;
+  }
+
+  Iteration? getIterationFromChart(String chartId) {
+    _firestore.collection('charts').doc(chartId).get().then((value) {
+      String iterationId = value.data()!['last_iteration'];
+
+      _firestore.collection('iterations').doc(iterationId).get().then((value) {
+        Iteration iteration = Iteration.fromMap(value.id, value.data()!);
+        return iteration;
+      });
+    });
+
+    //return null
   }
 
   Map<String, Iteration> getLastIterations() {
