@@ -92,6 +92,7 @@ class _CreateChartFormState extends State<CreateChartForm> {
   }
 
   void _update() {
+    db.addIteration(widget.chartId!, name.text, description.text, isRanked);
     widget.onTap();
   }
 
