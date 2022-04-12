@@ -1,9 +1,6 @@
-import 'package:charted/custom/forms/createchartform.dart';
-import 'package:charted/models/chart.dart';
 import 'package:charted/models/iteration.dart';
 import 'package:charted/pages/createchart.dart';
 import 'package:charted/services/database_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class IterationsPage extends StatefulWidget {
@@ -12,85 +9,107 @@ class IterationsPage extends StatefulWidget {
   final String name;
   final String chartID;
 
-  IterationsPage({
+  const IterationsPage({
     Key? key,
     required this.name,
     required this.chartID,
   }) : super(key: key);
 
-  //const IterationsPage({Key? key}) : super(key: key);
   @override
   State<IterationsPage> createState() => _IterationsPageState();
 }
 
 class _IterationsPageState extends State<IterationsPage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   final DatabaseService _db = DatabaseService();
-
-  //var lastIterations = DatabaseService().getLastITerations();
-  var lastIterations = {};
+  bool loading = true;
+  var chartIterations = {};
 
   @override
   void initState() {
     super.initState();
+    _getIterations();
   }
 
   @override
   Widget build(BuildContext context) {
+    var keys = chartIterations.keys.toList();
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.white,
-        flexibleSpace: SafeArea(
-          child: Container(
-            padding: const EdgeInsets.only(right: 16),
-            child: Row(
-              children: <Widget>[
-                IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    color: Colors.black,
+        appBar: AppBar(
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.white,
+          flexibleSpace: SafeArea(
+            child: Container(
+              padding: const EdgeInsets.only(right: 16),
+              child: Row(
+                children: <Widget>[
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      color: Colors.black,
+                    ),
                   ),
-                ),
-                const SizedBox(
-                  width: 14,
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        widget.name,
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w600),
-                      ),
-                      const SizedBox(
-                        height: 6,
-                      ),
-                    ],
+                  const SizedBox(
+                    width: 14,
                   ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    _openEditChart();
-                  },
-                  icon: const Icon(
-                    Icons.edit,
-                    color: Colors.black,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          widget.name,
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(
+                          height: 6,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                  IconButton(
+                    onPressed: () {
+                      _openEditChart();
+                    },
+                    icon: const Icon(
+                      Icons.edit,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-      body: const Text('this is a testttt'),
-    );
+        body: loading
+            ? const Text('loading')
+            : ListView.builder(
+                itemCount: chartIterations.length,
+                itemBuilder: (BuildContext context, int index) {
+                  Iteration currentIteration = chartIterations[keys[index]];
+
+                  //bri: make this a custom widget
+                  return GestureDetector(
+                      onTap: () {
+                        //pop up ieration modal
+                      },
+                      child: Card(
+                          elevation: 5.0,
+                          child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                ListTile(
+                                    leading: const Icon(Icons.library_music),
+                                    title: Text(currentIteration.name),
+                                    subtitle: Text(currentIteration.created
+                                        .toDate()
+                                        .toString())),
+                              ])));
+                }));
   }
 
   void _openEditChart() {
@@ -101,5 +120,13 @@ class _IterationsPageState extends State<IterationsPage> {
             builder: (context) => CreateChartPage(
                   chartId: widget.chartID,
                 )));
+  }
+
+  void _getIterations() async {
+    chartIterations = await _db.getChartIterations(widget.chartID);
+    setState(() {
+      chartIterations;
+      loading = false;
+    });
   }
 }

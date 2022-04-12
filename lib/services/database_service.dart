@@ -67,6 +67,21 @@ class DatabaseService {
     return iteration;
   }
 
+  Future<Map<String, Iteration>> getChartIterations(String chartId) async {
+    Map<String, Iteration> iterations = {};
+
+    var snapshots = await _firestore
+        .collection('iterations')
+        .where('chart', isEqualTo: chartId)
+        .get();
+
+    for (var iteration in snapshots.docs) {
+      var currentIteration = Iteration.fromMap(iteration.id, iteration.data());
+      iterations[currentIteration.id] = currentIteration;
+    }
+    return iterations;
+  }
+
   Map<String, Iteration> getLastIterations() {
     return lastIterationMap;
   }
