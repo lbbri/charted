@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 class CreateChartForm extends StatefulWidget {
   const CreateChartForm({
     required this.onTap,
-    this.chartId = '',
+    this.chartId,
     Key? key,
   }) : super(key: key);
   final Function onTap;
@@ -17,24 +17,24 @@ class CreateChartForm extends StatefulWidget {
 }
 
 class _CreateChartFormState extends State<CreateChartForm> {
+  bool editing = false;
   var formKey = GlobalKey<FormState>();
-  var loading = false;
+  var loading = true;
   var name = TextEditingController();
   var description = TextEditingController();
   var isRanked = false;
+  Iteration? currentIteration;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final db = DatabaseService();
 
   @override
-  Widget build(BuildContext context) {
-    print(widget.chartId);
-    if (widget.chartId != '') {
-      Iteration lastIteration = db.getIterationFromChart(widget.chartId!)!;
-      name.text = lastIteration.name;
-      description.text = lastIteration.description;
-      isRanked = lastIteration.ranked;
-    }
+  void initState() {
+    super.initState();
+    getIteration();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return loading
         ? const Center(child: Text('loading'))
         : Form(
@@ -73,7 +73,7 @@ class _CreateChartFormState extends State<CreateChartForm> {
                 Text(isRanked ? 'ranked' : 'unranked'),
                 ElevatedButton(
                     onPressed: () {
-                      _create();
+                      editing ? _update() : _create();
                     },
                     child: const Text("Save Chart")),
                 ElevatedButton(
@@ -89,6 +89,30 @@ class _CreateChartFormState extends State<CreateChartForm> {
   void _create() {
     db.addChart(_auth.currentUser!.uid, name.text, description.text, isRanked);
     widget.onTap();
+  }
+
+  void _update() {
+    widget.onTap();
+  }
+
+  void getIteration() async {
+    if (widget.chartId != null) {
+      db.getIterationFromChart(widget.chartId!).then((iteration) {
+        currentIteration = iteration;
+        name.text = currentIteration!.name;
+        description.text = currentIteration!.description;
+        isRanked = currentIteration!.ranked;
+        setState(() {
+          currentIteration;
+          editing = true;
+          loading = false;
+        });
+      });
+    } else {
+      setState(() {
+        loading = false;
+      });
+    }
   }
 
   void testConnection() {

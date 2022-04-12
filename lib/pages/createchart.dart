@@ -3,19 +3,18 @@ import 'package:flutter/material.dart';
 
 class CreateChartPage extends StatefulWidget {
   static const String routeName = '/create-charts';
+  final String? chartId;
 
-  CreateChartPage({
-    this.chartId = '',
+  const CreateChartPage({
+    this.chartId,
     Key? key,
   }) : super(key: key);
 
-  final String? chartId;
   @override
   State<CreateChartPage> createState() => _CreateChartPageState();
 }
 
 class _CreateChartPageState extends State<CreateChartPage> {
-  // List<ChatPreview> chatPreviews =
   @override
   void initState() {
     super.initState();
@@ -75,7 +74,7 @@ class _CreateChartPageState extends State<CreateChartPage> {
                 children: <Widget>[
               CreateChartForm(
                 onTap: () => _successfulCreation(context),
-                chartId: widget.chartId,
+                chartId: (widget.chartId != null) ? widget.chartId : null,
               ),
             ])));
   }

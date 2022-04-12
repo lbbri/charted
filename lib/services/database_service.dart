@@ -55,17 +55,16 @@ class DatabaseService {
     return;
   }
 
-  Iteration? getIterationFromChart(String chartId) {
-    _firestore.collection('charts').doc(chartId).get().then((value) {
-      String iterationId = value.data()!['last_iteration'];
+  Future<Iteration?> getIterationFromChart(String chartId) async {
+    var chartSnapshot =
+        await _firestore.collection('charts').doc(chartId).get();
+    var iterationId = chartSnapshot.data()!['last_iteration'];
 
-      _firestore.collection('iterations').doc(iterationId).get().then((value) {
-        Iteration iteration = Iteration.fromMap(value.id, value.data()!);
-        return iteration;
-      });
-    });
-
-    //return null
+    var iterationSnapshot =
+        await _firestore.collection('iterations').doc(iterationId).get();
+    Iteration iteration =
+        Iteration.fromMap(iterationSnapshot.id, iterationSnapshot.data()!);
+    return iteration;
   }
 
   Map<String, Iteration> getLastIterations() {

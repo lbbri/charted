@@ -94,9 +94,7 @@ class _IterationsPageState extends State<IterationsPage> {
   }
 
   void _openEditChart() {
-    // Navigator.pushNamed(context, '/create-charts',
-    //     arguments: {'chartId': widget.chartID});
-    String id = widget.chartID;
+    //?? is there any way I can use pushNamed with parameters
     Navigator.push(
         context,
         MaterialPageRoute(
